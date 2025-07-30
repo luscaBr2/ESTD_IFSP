@@ -4,7 +4,17 @@
 using namespace std;
 
 void inserirNotas(float notas[]){ 
-    for (uint16_t i = 0; i < 10; i++)
+    cout << "Quantas notas deseja cadastrar (max 10)? ";
+    
+    
+    uint16_t qtdMax = 0;
+
+    do{
+        cin >> qtdMax;
+        if(qtdMax > 10) cout << "Insira um valor menor que 10" << endl;
+    } while (qtdMax > 10);
+
+    for (uint16_t i = 0; i < qtdMax; i++)
     {
        cout << "Insira a " << (i+1) << "o nota:";
        cin >> notas[i];
@@ -13,7 +23,7 @@ void inserirNotas(float notas[]){
        cout << endl;
     }
 
-    cout << endl << endl;
+    cout << endl;
     
     return;
 }
@@ -67,7 +77,7 @@ void limparTela(){
 }
 
 int main() {
-    float notas[10] = {1,2,3,4,5,6,7,8,9,10};
+    float notas[10] = {0,0,0,0,0,0,0,0,0,0};
 
     int opcao;
 
