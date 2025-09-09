@@ -1,93 +1,127 @@
 #include <iostream>
-
 using namespace std;
 
-int tamanho;
+/* ---------------- Pilha (array) ---------------- */
+int pilha[1000];
+int topo = 0;
 
-int inicioFila = 0;
-int fimFila = 0;
-bool provavelFila = true;
 
-int inicioPilha = 0;
-int fimPilha = 0;
-bool provavelPilha = true;
-
-int inicioFilaPrioridade = 0;
-int fimFilaPrioridade = 0;
-bool provavelFilaPrioridade = true;
-
-void inserirFila(int valor, int *fila)
-{
-    fila[fimFila] = valor;
-    fimFila++;
+void inserirPilha(int x) {
+    if (topo < 1000) {
+        pilha[topo] = x;
+        topo++;
+    }
 }
 
-void removerFila()
-{
-    inicioFila++;
+int removerPilha() {
+    if (topo == 0) { 
+        return -1; 
+    }
+    topo--;
+    return pilha[topo];
 }
 
-void inserirPilha(int valor, int *pilha)
-{
-    pilha[fimPilha] = valor;
-    fimPilha++;
+/* --------------- Fila (array circular) --------- */
+int fila[1000];
+int inicio, fim;
+
+void inserirFila(int x) {
+    if (fim < 1000) {
+        fila[fim] = x;
+        fim++;
+    }
 }
 
-void removerPilha()
-{
-    fimPilha--;
+int removerFila() {
+    if (fim == 0) { 
+        return -1; 
+    }
+    
+    int v = fila[inicio];
+    inicio ++;
+    return v;
 }
 
-void inserirFilaPrioridade(int valor, int *filaPrioridade)
-{
-    filaPrioridade[fimFilaPrioridade] = valor;
-    fimFilaPrioridade++;
+/* ----------- Fila de Prioridade (heap máx) ----- */
+int filaFP[1000];
+int fimFP = 0;
+
+void inserirFP(int x) {
+    if (fim < 1000) {
+        filaFP[fimFP] = x;
+        fimFP++;
+    }
 }
 
-void removerFilaPrioridade(int *filaPrioridade)
-{
-    int maior = 0;
+int removerFP() {
+    if (fimFP == 0) { 
+        return -1; 
+    }
+    
+    int maior = filaFP[0];
+    int maiorId = 0;
 
-    for (int i = inicioFilaPrioridade; i < fimFilaPrioridade; i++) {
-        if (filaPrioridade[i] > filaPrioridade[maior]) {
-            maior = i;
+    for (int i = 1; i < fimFP; i++)
+    {
+        if (maior < filaFP[i])
+        {
+            maior = filaFP[i];
+            maiorId = i;
         }
     }
-    filaPrioridade[maior] = -1;
+
+    filaFP[maiorId] = -1;
+    return maior;
 }
 
-void compararVetores(int *fila, int *pilha, int *filaPrioridade)
-{
-}
+int main() {
+    int n;
+    while (cin >> n) {
+        // reset das três estruturas
+        topo = 0;
+        inicio = 0; 
+        fim = 0;
+        fimFP = 0;
 
-int main()
-{
-    cin >> tamanho;
+        int isPilha = 1, isFila = 1, isFP = 1;
 
-    int *fila = new int[tamanho];
-    int *pilha = new int[tamanho];
-    int *filaPrioridade = new int[tamanho];
+        for (int i = 0; i < n; ++i) {
+            int t, x;
+            cin >> t >> x;
+            if (t == 1) {
+                // inserir em todas
+                inserirPilha(x);
+                inserirFila(x);
+                inserirFP(x);
+            } else {
+                int v;
+                
+                if (isPilha) {
+                    v = removerPilha();
+                    if (v == -1 || v != x) 
+                        isPilha = 0;
+                }
 
-    int tentativas;
-    cin >> tentativas;
+                if (isFila) {
+                    v = removerFila();
+                    if (v == -1 || v != x) 
+                        isFila = 0;
+                }
 
-    for (int i = 0; i < tentativas; i++)
-    {
-        int operacao;
-        int parametro;
-        cin >> operacao >> parametro;
-
-        switch (operacao)
-        {
-        case 1:
-            // insere em todos os 3 passando os parametros
-
-            break;
-        case 2:
-            // remove em todos os 3
-
-            break;
+                if (isFP) {
+                    v = removerFP();
+                    if (v == -1 || v != x) 
+                        isFP = 0;
+                }
+            }
         }
+
+        int cnt = isPilha + isFila + isFP;
+        if (cnt == 0)        cout << "impossible\n";
+        else if (cnt > 1)    cout << "not sure\n";
+        else if (isPilha)   cout << "stack\n";
+        else if (isFila)   cout << "queue\n";
+        else                 cout << "priority queue\n";
     }
 
     return 0;
