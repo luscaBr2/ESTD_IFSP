@@ -196,7 +196,6 @@ void BuscaAuxiliar(int valorProcurado, No *&noPai, No *&noProcurado, No *raiz)
         noProcurado = nullptr;
 }
 
-// Remove um nó da árvore binária de busca de forma iterativa.
 void RemoverIterativo(No *&raiz, int valor)
 {
     No *noPai = nullptr;
@@ -210,7 +209,7 @@ void RemoverIterativo(No *&raiz, int valor)
         return;
     }
 
-    // Caso 1: Nó folha (sem filhos).
+    // Nó folha (sem filhos).
     if (noProcurado->esquerda == nullptr && noProcurado->direita == nullptr)
     {
         if (noPai == nullptr) // Se o nó é a raiz, atualiza a raiz para nullptr.
@@ -222,7 +221,7 @@ void RemoverIterativo(No *&raiz, int valor)
 
         delete noProcurado; // Libera a memória do nó removido.
     }
-    // Caso 2: Nó com apenas um filho.
+    // Nó com apenas um filho.
     else if (noProcurado->esquerda == nullptr || noProcurado->direita == nullptr)
     {
         // Seleciona o filho existente (esquerda ou direita).
@@ -237,7 +236,7 @@ void RemoverIterativo(No *&raiz, int valor)
 
         delete noProcurado; // Libera a memória do nó removido.
     }
-    // Caso 3: Nó com dois filhos.
+    // Nó com dois filhos.
     else
     {
         // Encontrar o sucessor (menor valor à direita).
@@ -255,6 +254,7 @@ void RemoverIterativo(No *&raiz, int valor)
             sucessorPai->direita = sucessor->direita;
         else
             sucessorPai->esquerda = sucessor->direita;
+
         delete sucessor;
     }
 }
