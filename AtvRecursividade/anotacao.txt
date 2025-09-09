@@ -1,0 +1,1 @@
+Uma recursão sempre deve começar com a condição de parada
