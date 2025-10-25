@@ -1,15 +1,16 @@
 #include <iostream>
+#include <string>
 
 using namespace std;
 
 struct No
 {
-    char letra;
-    No *prox;
+    char valor;
+    No *proximo;
     No *anterior;
 };
 
-void inserirFim(No *cabeca, char valor)
+void InserirFim(No *&cabeca, char valor)
 {
     No *novoNo = new No{valor, nullptr, nullptr};
 
@@ -18,92 +19,70 @@ void inserirFim(No *cabeca, char valor)
     else
     {
         No *aux = cabeca;
-        while (aux->prox != nullptr)
-            aux = aux->prox;
-
-        aux->prox = novoNo;
+        while (aux->proximo != nullptr)
+        {
+            aux = aux->proximo;
+        }
+        novoNo->anterior = aux;
+        aux->proximo = novoNo;
     }
 }
 
-void inserirInicio(No *calda, char valor)
+void ExibirLista(const No *cabeca)
 {
-    No *novoNo = new No{valor, nullptr, nullptr};
-
-    if (calda == nullptr)
-        calda = novoNo;
-    else
-    {
-        No *aux = calda;
-        while (aux->anterior != nullptr)
-            aux = aux->anterior;
-
-        aux->anterior = novoNo;
-    }
-}
-
-void ExibirLista(const No *comeco)
-{
-    const No *aux = comeco;
+    const No *aux = cabeca;
     while (aux != nullptr)
     {
-        cout << aux->letra << " ";
-        aux = aux->prox;
+        cout << aux->valor << " ";
+        aux = aux->proximo;
     }
-
     cout << endl;
 }
 
-string FormaPalavraFrente(No *cabeca)
+bool ePalindromo(No *cabeca)
 {
-    string palavraFormada = "";
+    if (cabeca == nullptr)
+        return false;
 
-    No *atual = cabeca;
-    while (atual)
+    No *fim = cabeca;
+    while (fim->proximo != nullptr)
     {
-        palavraFormada += atual->letra;
-        atual = atual->prox;
+        fim = fim->proximo;
     }
 
-    return palavraFormada;
-}
-
-string FormaPalavraCostas(No *calda)
-{
-    No *atual = calda;
-    string palavraFormada = "";
-
-    while (atual)
+    No *inicio = cabeca;
+    while (inicio != fim)
     {
-        palavraFormada += atual->letra;
-        atual = atual->anterior;
+        if (inicio->valor != fim->valor)
+        {
+            return false;
+        }
+        inicio = inicio->proximo;
+        fim = fim->anterior;
     }
-
-    return palavraFormada;
+    return true;
 }
 
 int main()
 {
-    cout << "Insira uma palavra com um total de letras impares: ";
+    No *cabeca = nullptr;
+
     string palavra;
     cin >> palavra;
 
-    No *cabeca = nullptr;
-    No *calda = nullptr;
+    for (char c : palavra)
+    {
+        InserirFim(cabeca, c);
+    }
 
-    // insere normalmente
-    for (char letra : palavra)
-        inserirFim(cabeca, letra);
-
-    cout << cabeca->letra;
-
-    // insere de traz pra frente
-    for (char letra : palavra)
-        inserirInicio(calda, letra);
-
-    if (FormaPalavraCostas(calda) == FormaPalavraFrente(cabeca))
-        cout << "é um palindromo";
+    if (ePalindromo(cabeca))
+    {
+        cout << "A palavra e um palindromo." << endl;
+    }
     else
-        cout << "Não é um palindromo";
+    {
+        cout << "A palavra nao e um palindromo." << endl;
+    }
 
     return 0;
 }

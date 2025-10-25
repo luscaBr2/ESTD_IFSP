@@ -1,79 +1,30 @@
 #include <iostream>
-
 using namespace std;
 
 struct No
 {
-    char valor;
-    No *direita;
-    No *esquerda;
+    char chave;
+    No *dir;
+    No *esq;
 };
 
-bool letraExiste = false;
-
-void buscar(char valorProcurado, No *raiz) // edita a var global letraExiste
-{
-    if (raiz == nullptr)                    // condição de parada, ja que não há o que pesquisar se a raiz é nula
-        letraExiste = false;                // cout << "Valor NAO encontrado" << endl;
-    else if (valorProcurado == raiz->valor) // condição de parada, não precisa continuar quando achar o elemento
-        letraExiste = true;                 // cout << "Valor encontrado" << endl;
-    else if (valorProcurado > raiz->valor)
-        buscar(valorProcurado, raiz->esquerda);
-    else
-        buscar(valorProcurado, raiz->direita);
-}
-
-void inserir(char novoValor, No *&raiz)
-{
-    letraExiste = false;     // reseta
-    buscar(novoValor, raiz); // vai editar a var global pra ser usada depois
-
-    if (raiz == nullptr)
-    {
-        raiz = new No();
-
-        // verifica se ja existe
-        //  se a letra não estiver presente, insira
-        if (!letraExiste)
-        {
-            raiz->valor = novoValor;
-            raiz->direita = nullptr;
-            raiz->esquerda = nullptr;
-        }
-    }
-    else if (novoValor < raiz->valor)
-        inserir(novoValor, raiz->direita);
-    else
-        inserir(novoValor, raiz->esquerda);
-}
-
-void EmOrdem(No *raiz)
-{
-    if (raiz != nullptr)
-    {
-        EmOrdem(raiz->esquerda);
-        cout << raiz->valor << " - ";
-        EmOrdem(raiz->direita);
-    }
-}
-
-// FILA PARA USAR NA EXIBIÇÃO POR LARGURA
-//==========================================
-No *fila[26];
+No *fila[100];
 int inicio = 0;
 int fim = 0;
 
-void enfileirar(No *no)
+void Enfileirar(No *valor)
 {
     if (fim == 100)
+    {
+        cout << "Fila cheia!!" << endl;
         return;
+    }
 
-    fila[fim] = no;
-
+    fila[fim] = valor;
     fim++;
 }
 
-void desenfileirar()
+void Desenfileirar()
 {
     if (inicio == fim)
     {
@@ -84,48 +35,93 @@ void desenfileirar()
     inicio++;
 }
 
-// ====================================
-
-void exibirPorLargura(No *raiz)
+void Inserir(char chave, No *&raiz)
 {
-    enfileirar(raiz);
-
-    for (int i = 0; i < 26; i++)
+    if (raiz == nullptr)
     {
-        cout << fila[i]->valor << " - ";
-        if (fila[i]->esquerda != nullptr)
-            enfileirar(fila[i]->esquerda);
+        raiz = new No;
+        raiz->chave = chave;
+        raiz->dir = nullptr;
+        raiz->esq = nullptr;
+    }
+    else if (chave > raiz->chave)
+        Inserir(chave, raiz->esq);
+    else
+        Inserir(chave, raiz->dir);
+}
 
-        if (fila[i]->direita != nullptr)
-            enfileirar(fila[i]->direita);
+bool Buscar(char chave, No *raiz)
+{
+    if (raiz == nullptr)
+    {
+        return false;
+    }
+    else if (raiz->chave == chave)
+    {
+        return true;
+    }
+    else if (chave > raiz->chave)
+        Buscar(chave, raiz->esq);
+    else
+        Buscar(chave, raiz->dir);
+}
 
-        desenfileirar();
+void EmOrdem(No *raiz)
+{
+    if (raiz != nullptr)
+    {
+        EmOrdem(raiz->esq);
+        cout << raiz->chave << " - ";
+        EmOrdem(raiz->dir);
     }
 }
 
-int main()
+int Contagem(No *raiz)
 {
-    No *raiz = new No();
+    if (raiz == nullptr)
+        return 0;
+    else
+    {
+        return Contagem(raiz->esq) + 1 + Contagem(raiz->dir);
+    }
+}
 
-    for (char letra : "lucas aparecido dos santos")
-        inserir(letra, raiz);
+void Largura(No *raiz)
+{
+    Enfileirar(raiz);
 
-    EmOrdem(raiz);
-    cout << endl;
+    for (int i = 0; i < Contagem(raiz); i++)
+    {
+        cout << fila[i]->chave << " - ";
+        if (fila[i]->esq != nullptr)
+            Enfileirar(fila[i]->esq);
+        if (fila[i]->dir != nullptr)
+            Enfileirar(fila[i]->dir);
+        Desenfileirar();
+    }
+}
 
-    exibirPorLargura(raiz);
-    cout << endl;
+int main(int argc, char const *argv[])
+{
+    No *raiz = nullptr;
+    Inserir('I', raiz);
+    Inserir('G', raiz);
+    Inserir('O', raiz);
+    Inserir('R', raiz);
 
-    cout << "Entre com uma palavra" << endl;
     string palavra;
+    cin >> palavra;
 
-    for (char letra : palavra)
-        inserir(letra, raiz);
+    for (char c : palavra)
+    {
+        if (!Buscar(c, raiz))
+            Inserir(c, raiz);
+    }
 
-    EmOrdem(raiz);
+    Largura(raiz);
     cout << endl;
 
-    exibirPorLargura(raiz);
+    EmOrdem(raiz);
     cout << endl;
 
     return 0;
