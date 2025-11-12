@@ -46,7 +46,7 @@ void inserirAresta(No **&grafo, int origem, int destino, int peso)
     // No* novoOrigem = new No {origem, peso, nullptr}; //  para grafos não direcionados, criar também origem->destino
     // novoOrigem->proximo = grafo[destino]; //  ligar novo nó na lista do destino
     // grafo[destino] = novoOrigem; // definir cabeça da lista do destino
-} // fecha função inserirAresta
+}
 
 void imprimirGrafo(No **grafo, int NUMERO_VERTICES)
 {
@@ -133,6 +133,49 @@ void buscaProfundidade(No **grafo, int origem, int destino, int NUMERO_VERTICES)
         cout << "Caminho Nao Existe!";
 }
 
+// Imprime a matriz de adjacência (numVertices x numVertices)
+void imprimirMatrizAdjacencia(No **grafo, int numVertices)
+{
+    cout << "Matriz de Adjacencia:" << endl;
+
+    cout << "   "; // 3 espaços
+
+    // escreve o vertice antes dos valores da tabela, cabeçalho da tabela
+    for (int i = 0; i < numVertices; i++)
+        cout << "v" << i << " ";
+
+    cout << endl;
+
+    for (int i = 0; i < numVertices; ++i) // percorre as linhas (vértices de origem)
+    {
+        cout << "v" << i << " ";
+
+        for (int j = 0; j < numVertices; ++j) // percorre as colunas (vértices de destino)
+        {
+            int valor = -1; // ausência de aresta i -> j
+
+            // percorre a lista de adjacência do vértice i
+            for (No *atual = grafo[i]; atual != nullptr; atual = atual->proximo)
+            {
+                // se há aresta de i para j, salva o peso e interrompe a busca
+                if (atual->vertice == j)
+                {
+                    valor = atual->peso;
+                    break;
+                }
+            }
+
+            if (valor >= 0 && valor <= 9)
+                cout << "0" << valor;
+            else
+                cout << valor;
+
+            // coloca espaço entre colunas ou nova linha no fim da linha
+            cout << (j < numVertices - 1 ? ' ' : '\n');
+        }
+    }
+}
+
 int main()
 {
     const int NUMERO_VERTICES = 6;
@@ -170,6 +213,8 @@ int main()
     // tem que retornar true, pois
     buscaProfundidade(grafo, 0, 4, NUMERO_VERTICES); // executa busca em profundidade do vértice 0 até 4
     cout << endl;
+
+    imprimirMatrizAdjacencia(grafo, NUMERO_VERTICES);
 
     return 0;
 }
